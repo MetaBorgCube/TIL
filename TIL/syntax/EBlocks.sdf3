@@ -1,0 +1,13 @@
+module EBlocks
+
+imports
+  Expressions
+  Statements
+
+context-free syntax
+
+  Exp.EBlock = [begin
+[{Stat "\n"}*]
+return [Exp];
+[{Stat "\n"}*]
+end]

@@ -1,0 +1,25 @@
+module Layout
+
+lexical sorts
+  NEWLINE_EOF EOF
+
+lexical syntax
+  LAYOUT           = [\ \t\n\r]
+  LAYOUT           = "//" ~[\n\r]* NEWLINE_EOF
+  NEWLINE_EOF      = [\n\r]
+  NEWLINE_EOF      = EOF
+  EOF              =
+
+lexical restrictions
+
+  // EOF may not be followed by any char
+
+  EOF             -/- ~[]
+
+context-free restrictions
+
+  // Ensure greedy matching for comments
+
+  LAYOUT? -/- [\ \t\n\r]
+  LAYOUT? -/- [\/].[\/]
+  LAYOUT? -/- [\/].[\*]

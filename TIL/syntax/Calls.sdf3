@@ -1,0 +1,10 @@
+module Calls
+
+imports
+  Literals
+  Expressions
+  Statements
+
+context-free syntax
+  Exp.FunCall   = [[ID]([{Exp ","}*])]
+  Stat.ProcCall = [[ID]([{Exp ","}*]);]

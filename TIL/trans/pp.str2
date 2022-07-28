@@ -1,0 +1,52 @@
+module pp
+
+imports
+  strategolib
+
+imports
+
+  gpp
+  libspoofax/sdf/pp
+  libspoofax/editor/refactoring/-
+  pp/TinyImperativeLanguage-parenthesize
+  pp/TinyImperativeLanguage-pp
+
+rules
+  editor-format :: ? * ? * ? * string * string -> string * ?
+  editor-format:
+    (node, _, ast, path, project-path) -> (filename, result)
+    with
+      ext      := <get-extension> path
+    ; filename := <guarantee-extension(|$[pp.[ext]])> path
+    ; result   := <pp-debug> node
+
+rules
+  
+  pp-TinyImperativeLanguage-string =
+    parenthesize-TinyImperativeLanguage
+    ; prettyprint-TinyImperativeLanguage-start-symbols
+    ; !V([], <id>)
+    ; box2text-string(|120)
+      
+  pp-partial-TinyImperativeLanguage-string =
+    parenthesize-TinyImperativeLanguage
+    ; prettyprint-TinyImperativeLanguage
+    ; !V([], <id>)
+    ; box2text-string(|120)
+    
+  pp-partial-TinyImperativeLanguage-string(|sort) =
+    parenthesize-TinyImperativeLanguage
+    ; prettyprint-TinyImperativeLanguage(|sort)
+    ; !V([], <id>)
+    ; box2text-string(|120)  
+      
+  pp-debug :
+    ast -> result
+    with
+       result := <pp-TinyImperativeLanguage-string> ast
+    <+ <bottomup(try(not(is-string); not(is-list); not(pp-TinyImperativeLanguage-string); debug(!"cannot pp ")))> ast
+    ;  result := ""
+
+rules
+  
+  construct-textual-change = construct-textual-change(pp-partial-TinyImperativeLanguage-string, parenthesize, override-reconstruction, resugar)

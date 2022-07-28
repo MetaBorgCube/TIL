@@ -1,0 +1,10 @@
+---
+id: mb.cube:TIL.test:0.1.0-SNAPSHOT
+name: TinyImperativeLanguage
+dependencies:
+  compile:
+  - mb.cube:TIL:0.1.0-SNAPSHOT
+  - org.metaborg:org.metaborg.meta.lang.spt:${metaborgVersion}
+build:
+  useBuildSystemSpec: true
+

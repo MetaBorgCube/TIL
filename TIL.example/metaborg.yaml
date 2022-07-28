@@ -1,0 +1,9 @@
+---
+id: mb.cube:TIL.example:0.1.0-SNAPSHOT
+name: TinyImperativeLanguage
+dependencies:
+  compile:
+  - mb.cube:TIL:0.1.0-SNAPSHOT
+build:
+  useBuildSystemSpec: true
+

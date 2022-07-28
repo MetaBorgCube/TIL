@@ -1,0 +1,11 @@
+module Types
+
+imports
+  Literals
+
+context-free sorts
+  Type
+
+
+context-free syntax
+  Type.TypeName = ID

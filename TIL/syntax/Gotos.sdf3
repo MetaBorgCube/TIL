@@ -1,0 +1,12 @@
+module Gotos
+
+imports
+  Expressions
+  Statements
+  Literals
+
+context-free syntax
+
+  Stat.Label = [label [ID];]
+  Stat.Jump  = [goto [ID];]
+  Stat.CJump = [if [Exp] goto [ID];]

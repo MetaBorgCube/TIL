@@ -1,0 +1,23 @@
+module TinyImperativeLanguage
+
+imports
+
+  Layout
+  Literals
+  Expressions
+  Statements
+  Calls
+  EBlocks
+  Gotos
+
+context-free start-symbols
+
+  Start
+
+context-free sorts
+
+  Start
+
+context-free syntax
+
+  Start.Program = [begin [{Stat "\n"}*] end]

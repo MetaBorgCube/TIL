@@ -1,0 +1,65 @@
+module Statements
+
+imports
+  Literals
+  Expressions
+  Types
+
+context-free sorts
+  Stat
+  Catch
+
+context-free syntax
+
+  Stat.Declaration = [var [ID];]
+
+  Stat.DeclarationTyped = [var [ID] : [Type];]
+
+  Stat.Assign = [[ID] := [Exp];]
+
+  Stat.Block = [begin
+  [{Stat "\n"}*]
+end]
+
+  Stat.IfThen = [if [Exp]
+then
+  [{Stat "\n"}*]
+end]
+
+  Stat.IfElse = [if [Exp]
+then
+  [{Stat "\n"}*]
+else
+  [{Stat "\n"}*]
+end]
+
+  Stat.While = [while [Exp]
+do
+  [{Stat "\n"}*]
+end]
+
+  Stat.For = [for [ID] := [Exp] to [Exp]
+do
+  [Stat*]
+end]
+
+  Stat.Break = [break [ID?];]
+
+  Stat.Continue = [continue [ID?];]
+
+  Stat.Labeled = [[ID]: [Stat]]
+
+  Stat.Try = [try [{Stat "\n"}*]
+[{Catch "\n"}+]
+end]
+
+  Stat.Try = [try [{Stat "\n"}*]
+[{Catch "\n"}*]
+finally
+  [{Stat "\n"}*]
+end]
+
+  Catch.Catch = [catch([ID] : [ID])
+  [{Stat "\n"}*]]
+
+  Stat.Throw = [throw [Type];]

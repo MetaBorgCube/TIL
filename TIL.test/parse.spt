@@ -1,0 +1,31 @@
+module parse
+
+language TinyImperativeLanguage
+
+test test1 [[
+begin
+var n;
+n := readint();
+var x;
+var fact;
+fact := 1;
+for x := 1 to n do
+  fact := x * fact;
+end
+write("factorial of ");
+writeint(n);
+write(" is ");
+writeint(fact);
+write("\n");
+end
+]] parse succeeds
+
+test test2 [[
+begin
+if x * (y + 10) = 34 then
+  x := x / (y - 1);
+else 
+  x := x * (y / 3);
+end
+end
+]] parse succeeds

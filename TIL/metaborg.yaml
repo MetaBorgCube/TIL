@@ -1,0 +1,38 @@
+---
+id: mb.cube:TIL:0.1.0-SNAPSHOT
+name: TinyImperativeLanguage
+dependencies:
+  compile:
+  - org.metaborg:org.metaborg.meta.lang.esv:${metaborgVersion}
+  - org.metaborg:org.metaborg.meta.lang.template:${metaborgVersion}
+  - org.metaborg:stratego.lang:${metaborgVersion}
+  source:
+  - org.metaborg:meta.lib.spoofax:${metaborgVersion}
+  - org.metaborg:strategolib:${metaborgVersion}
+  - org.metaborg:gpp:${metaborgVersion}
+pardonedLanguages:
+- EditorService
+- Stratego-Sugar
+- SDF
+language:
+  sdf:
+    enabled: true
+    pretty-print: TinyImperativeLanguage
+    sdf2table: java
+    placeholder:
+      prefix: "$"
+  stratego:
+    enabled: true
+    format: jar
+    args:
+    - -la
+    - stratego-sglr
+    - -la
+    - stratego-xtc
+    - -la
+    - stratego-aterm
+    - -la
+    - stratego-sdf
+    - -la
+    - strc
+exports:
