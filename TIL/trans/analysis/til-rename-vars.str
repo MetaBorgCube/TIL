@@ -1,0 +1,32 @@
+module analysis/til-rename-vars
+
+imports
+  signatures/-
+  libstratego-lib
+
+signature
+  constructors
+    Read : ID -> Exp
+
+strategies
+
+  til-rename-vars =
+    {| RenameVar
+     : Var(RenameVar)
+    <+ Assign(RenameVar, til-rename-vars)
+    <+ Read(RenameVar)
+    <+ For(RenameVar, til-rename-vars, til-rename-vars, til-rename-vars)
+    <+ RenameDeclaration
+    <+ Block({| RenameVar : map(til-rename-vars) |})
+    <+ all(til-rename-vars)
+     |}
+
+  RenameDeclaration :
+    Declaration(x) -> Declaration(y)
+    where <newname> x => y
+        ; rules( RenameVar : x -> y )
+
+  RenameDeclaration :
+    DeclarationTyped(x, t) -> DeclarationTyped(y, t)
+    where <newname> x => y
+        ; rules( RenameVar : x -> y )

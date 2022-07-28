@@ -1,0 +1,13 @@
+module interpreter/til-eval-exp
+
+imports
+  signatures/-
+  rewrite/til-eval
+
+strategies
+  eval-exp(eval-var) = 
+    bottomup(try(
+      eval-var <+ EvalAdd <+ EvalMul <+ EvalSub <+ EvalDiv <+ EvalMod
+      <+ EvalLeq <+ EvalGeq <+ EvalLt <+ EvalGt <+ EvalEqu <+ EvalNeq
+      <+ EvalOr <+ EvalAnd <+ EvalS2I <+ EvalI2S
+    ))

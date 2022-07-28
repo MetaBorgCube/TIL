@@ -1,0 +1,10 @@
+module interpreter/til-run
+
+imports
+  libstratego-lib
+  interpreter/til-eval-stats
+
+strategies
+  eval-program = 
+    ?Program(<eval-stats>)
+    ; <exit> 0

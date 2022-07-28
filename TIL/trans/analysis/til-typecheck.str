@@ -1,0 +1,11 @@
+module analysis/til-typecheck
+
+imports
+  libstratego-lib
+  analysis/til-typecheck-stats
+  signatures/-
+
+strategies
+
+  typecheck-program =
+    Program(typecheck-stats)
