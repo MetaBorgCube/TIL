@@ -1,10 +1,12 @@
+begin
 var i;
-var j
+var j;
 i := 1;
 while Q do 
  j := i;
  i := f();
- i := j
-end;
+ i := j;
+end
 writeint(i);
 writeint(j);
+end

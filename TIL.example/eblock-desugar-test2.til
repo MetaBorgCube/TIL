@@ -1,3 +1,4 @@
+begin
 write(
   begin
     var x;
@@ -12,3 +13,4 @@ write(
     write(x);
   end
 );
+end

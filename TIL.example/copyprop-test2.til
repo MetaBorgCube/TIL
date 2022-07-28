@@ -1,3 +1,4 @@
+begin
 var x : int;
 var y : int;
 x := string2int(read());
@@ -5,3 +6,4 @@ y := x;
 y := y + 1;
 x := y;
 write(int2string(x));
+end

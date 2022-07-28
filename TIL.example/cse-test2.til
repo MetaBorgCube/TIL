@@ -1,3 +1,4 @@
+begin
 var a;
 var b;
 var x;
@@ -8,3 +9,4 @@ writeint(a + b);
 a := 23;
 x := a + b;
 writeint(a + b);
+end

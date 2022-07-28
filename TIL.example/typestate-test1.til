@@ -1,4 +1,4 @@
-
+begin
 var x : int;
 var y : int;
 var z : int;
@@ -12,3 +12,4 @@ else
   z := 42;
 end
 write(x + y + z);
+end
