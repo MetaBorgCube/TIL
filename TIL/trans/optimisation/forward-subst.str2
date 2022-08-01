@@ -1,26 +1,22 @@
-module optimisation/til-forward-subst
+module optimisation/forward-subst
 
 imports
-  optimisation/til-opt-lib
+  strategolib
+  signatures/-
+  optimisation/opt-lib
 
 strategies
   forward-subst = 
-    ForwardSubst
-    <+ forward-subst-declaration
-    <+ forward-subst-assign 
-    <+ forward-subst-if
-    <+ forward-subst-block
-    <+ forward-subst-while
-    <+ all(forward-subst)
+    alltd(ForwardSubst <+ forward-rule)
 
-  forward-subst-block =
+  forward-rule =
     Block({| ForwardSubst : map(forward-subst) |})
 
-  forward-subst-declaration = 
+  forward-rule = 
     (?Declaration(x) <+ ?DeclarationTyped(x, t))
     ; new-ForwardSubst(|x, x)
 
-  forward-subst-assign = 
+  forward-rule = 
     Assign(?x, forward-subst => e)
     ; undefine-ForwardSubst(|x)
     ; if <not(is-var); is-pure-exp; not(contains(|Var(x)))> e then
@@ -29,11 +25,11 @@ strategies
         ; rules( ForwardSubst.z : Var(x) -> e depends on deps )
       end
 
-  forward-subst-if =
+  forward-rule =
     IfElse(forward-subst, id, id)
     ; (IfElse(id, forward-subst, id) /ForwardSubst\ IfElse(id,id,forward-subst))
 
-  forward-subst-while =
+  forward-rule =
     ?While(_, _)
     ; (/ForwardSubst\* While(forward-subst, forward-subst))
 

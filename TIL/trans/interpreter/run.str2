@@ -1,0 +1,9 @@
+module interpreter/run
+
+imports
+  strategolib
+  interpreter/eval-stats
+
+strategies
+  eval-program = 
+    ?Program(<eval-stats>)

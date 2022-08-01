@@ -1,33 +1,37 @@
-module optimisation/til-opt-lib
+module optimisation/opt-lib
 
 imports
   signatures/-
-  libstratego-lib
-  interpreter/til-eval-exp
+  strategolib
+  rewrite/desugar
+  rewrite/eval
 
 strategies
+  contains(|?) :: ? -> ?
   contains(|x) =  // should be in stratego-lib
     oncetd(?x)
 
+  elem-of(|?) :: ? -> ?
   elem-of(|xs) = // should be in stratego-lib
     ?x; where(<fetch(?x)> xs)
 
+  get-var-names :: ? -> ?
   get-var-names =
     collect(?Var(<id>))
 
+  get-var-dependencies :: ? -> ?
   get-var-dependencies =
     collect(?Var(<!(<id>,<id>)>))
 
-  EvalExp =
-    EvalAdd <+ EvalMul <+ EvalSub <+ EvalDiv <+ EvalMod
-    <+ EvalLt <+ EvalGt <+ EvalEqu <+ EvalNeq
-
+  is-var :: ? -> ?
   is-var =
     ?Var(_)
 
+  is-value :: ? -> ?
   is-value =
     ?Int(_) <+ ?String(_)
 
+  is-pure-exp :: ? -> ?
   is-pure-exp =
     ?Var(_) <+ ?Int(_) <+ ?String(_)
     <+ is-bin-op#([is-pure-exp, is-pure-exp])

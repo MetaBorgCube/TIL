@@ -1,29 +1,19 @@
-module optimisation/til-varunion
+module optimisation/varunion
 
 imports
-  optimisation/til-opt-lib
+  strategolib
+  signatures/-
+  optimisation/opt-lib
+  rewrite/eval
 
 strategies
+  varunion :: ? -> ?
   varunion =
-    apply-VarUnion
-    <+ varunion-declaration
-    <+ varunion-assign
-    <+ varunion-block
-    <+ varunion-if-then
-    <+ varunion-if-then-else
-    <+ varunion-while
-    <+ varunion-labeled-while
-    <+ varunion-for
-    <+ varunion-labeled-stm
-    <+ varunion-break
-    <+ varunion-break-label
-    <+ varunion-continue
-    <+ varunion-continue-label
-    <+ varunion-throw
-    <+ varunion-try-catch
-    <+ varunion-try-catch-finally
+       apply-VarUnion
+    <+ varunion-rule
     <+ all(varunion); try(EvalExp)
 
+  apply-VarUnion :: ? -> ?
   apply-VarUnion :
     Var(x) -> x'
     where <bagof-VarUnion>Var(x) => [v|vs]
@@ -31,14 +21,15 @@ strategies
            < !v
            + !FunCall(<conc-strings>("select", x), [v|vs])) => x'
 
-  varunion-block =
+  varunion-rule :: ? -> ?
+  varunion-rule =
     Block({| VarUnion : map(varunion) |})
 
-  varunion-declaration =
+  varunion-rule =
     (?Declaration(x) <+ ?DeclarationTyped(x, t))
     ; rules( VarUnion+x :- Var(x) )
 
-  varunion-assign =
+  varunion-rule =
     Assign(?x, varunion => e)
     ; if <is-value> e then
         rules( VarUnion.x : Var(x) -> e )
@@ -46,53 +37,53 @@ strategies
         rules( VarUnion.x :- Var(x) )
       end
 
-  varunion-if-then =
+  varunion-rule =
     IfThen(varunion, id)
     ; (EvalIf; varunion
        <+ IfThen(id, {| VarUnion: map(varunion) |}) \VarUnion/ id)
 
-  varunion-if-then-else =
+  varunion-rule =
     IfElse(varunion, id, id)
     ; (EvalIf; varunion
        <+ IfElse(id, {| VarUnion: map(varunion) |}, id) \VarUnion/
           IfElse(id, id, {| VarUnion: map(varunion) |}))
 
-  varunion-while =
+  varunion-rule =
     ?While(_, _)
     ; (\VarUnion/* While(varunion, {| VarUnion: map(varunion) |}))
 
-  varunion-labeled-while =
+  varunion-rule =
     Labeled(?label,
       dr-fix-and-union(While(varunion, {| VarUnion: map(varunion) |}) | ["VarUnion"], label)
     )
 
-  varunion-for =
+  varunion-rule =
     For(?x, varunion, varunion, id)
     ; rules( VarUnion.x :- Var(x) )
     ; (\VarUnion/* For(id, id, id, {| VarUnion: map(varunion) |}))
 
-  varunion-labeled-stm =
+  varunion-rule =
     Labeled(?label,
       dr-label-union(varunion | ["VarUnion"], label)
     )
 
-  varunion-break =
+  varunion-rule =
     ?Break(None())
     ; break-VarUnion
 
-  varunion-break-label =
+  varunion-rule =
     ?Break(Some(label))
     ; break-to-label-VarUnion(|label)
 
-  varunion-continue =
+  varunion-rule =
     ?Continue(None())
     ; continue-VarUnion
 
-  varunion-continue-label =
+  varunion-rule =
     ?Continue(Some(label))
     ; continue-to-label-VarUnion(|label)
 
-  varunion-try-catch =
+  varunion-rule =
     ?Try(tblock, cclauses)
     ; dr-init-exception-block(fail | <get-catch-tags>cclauses, ["VarUnion"])
     ; <varunion>tblock => tblock'
@@ -100,7 +91,7 @@ strategies
     ; dr-complete-exception-block-union(|["VarUnion"])
     ; !Try(tblock', cclauses')
 
-  varunion-try-catch-finally =
+  varunion-rule =
     ?Try(tblock, cclauses, fblock)
     ; dr-init-exception-block(id | <get-catch-tags>cclauses, ["VarUnion"])
     ; <varunion>tblock => tblock'
@@ -112,6 +103,6 @@ strategies
   get-catch-tags =
     map(?Catch(_, <id>, _))
 
-  varunion-throw =
+  varunion-rule =
     ?Throw(TypeName(t))
     ; throw-VarUnion(eq | t)

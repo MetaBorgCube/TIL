@@ -1,8 +1,9 @@
-module analysis/til-typecheck-var
+module analysis/typecheck-var
 
 imports
+  strategolib
   signatures/-
-  analysis/til-typecheck-exp
+  analysis/typecheck-exp
 
 strategies
   typecheck-declaration =

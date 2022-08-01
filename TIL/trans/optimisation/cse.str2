@@ -1,26 +1,24 @@
-module optimisation/til-cse
+module optimisation/cse
 
 imports
-  optimisation/til-opt-lib
+  strategolib
+  signatures/-
+  optimisation/opt-lib
 
 strategies
+  cse :: ? -> ?
   cse = 
-    CSE
-    <+ cse-declaration
-    <+ cse-assign 
-    <+ cse-if
-    <+ cse-block
-    <+ cse-while
-    <+ all(cse)
+    alltd(CSE <+ cse-rule)
 
-  cse-block =
+  cse-rule :: ? -> ?
+  cse-rule =
     Block({| CSE : map(cse) |})
 
-  cse-declaration = 
+  cse-rule = 
     (?Declaration(x) <+ ?DeclarationTyped(x, t))
     ; new-CSE(|x, x)
 
-  cse-assign = 
+  cse-rule = 
     Assign(?x, cse => e)
     ; undefine-CSE(|x)
     ; if <not(contains(|Var(x)))> e then
@@ -29,14 +27,15 @@ strategies
         ; rules( CSE.z : e -> Var(x) depends on deps )
       end
 
-  cse-if =
+  cse-rule =
     IfElse(cse, id, id)
     ; (IfElse(id, cse, id) /CSE\ IfElse(id,id,cse))
 
-  cse-while =
+  cse-rule =
     ?While(_, _)
     ; (/CSE\* While(cse, cse))
 
+  innermost-scope-CSE :: ? -> ?
   innermost-scope-CSE = 
     get-var-names => vars
     ; innermost-scope-CSE(elem-of(|vars))

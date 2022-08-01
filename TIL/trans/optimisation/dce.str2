@@ -1,8 +1,9 @@
-module til-dce
+module optimisation/dce
 
 imports
+  strategolib
   signatures/-
-  libstratego-lib
+  
 
 rules
   ElimDecl :
@@ -12,10 +13,6 @@ rules
   ElimDecl :
     [DeclarationTyped(x, t) | st*] -> st*
     where <not(VarUsed)> Var(x)
-
-  ElimAssign :
-    Assign(x, e) -> Block([])
-    where <not(VarNeeded)> Var(x)
 
   ElimIf :
     IfElse(e, [], []) -> Block([])
@@ -32,24 +29,11 @@ rules
     IfThen(e, []) -> Block([])
 
 strategies
-  io-til-dce =
-    io-wrap(dce-program)
-
-  dce-stat =
-    ElimAssign
-    <+ dce-assign
-    <+ dce-proccall
-    <+ dce-if-then; try(ElimIf)
-    <+ dce-if-then-else; try(ElimIf)
-    <+ dce-block
-    <+ dce-break
-    <+ dce-while
-    <+ dce-for
 
   dce-program =
     Program(dce-stats)
 
-  dce-block =
+  dce-stat =
     Block(dce-stats)
 
   dce-stats =
@@ -75,12 +59,16 @@ strategies
     ; [dce-stat | id]
     ; try(?[Block([]) | <id>])
 
-  dce-assign =
+  dce-stat :
+    Assign(x, e) -> Block([])
+    where <not(VarNeeded)> Var(x)
+
+  dce-stat =
     ?Assign(x, _)
     ; rules( VarNeeded.x :- Var(x) )
     ; Assign(id, declare-var-needed)
 
-  dce-proccall =
+  dce-stat =
     ProcCall(id, map(declare-var-needed))
 
   declare-var-needed =
@@ -92,26 +80,28 @@ strategies
         )
     })
 
-  dce-if-then =
+  dce-stat =
     ?IfThen(_, _)
-    ; (IfThen(id, dce-stats) \VarNeeded,VarUsed/ id)
+    ; (IfThen(id, dce-stats) \VarNeeded, VarUsed/ id)
     ; IfThen(declare-var-needed, id)
+    ; try(ElimIf)
 
-  dce-if-then-else =
+  dce-stat =
     ?IfElse(_, _, _)
-    ; (IfElse(id, dce-stats, id) \VarNeeded,VarUsed/ IfElse(id, id, dce-stats))
+    ; (IfElse(id, dce-stats, id) \VarNeeded, VarUsed/ IfElse(id, id, dce-stats))
     ; IfElse(declare-var-needed, id, id)
+    ; try(ElimIf)
 
-  dce-break =
+  dce-stat =
     ?Break(None())
     ; break-bp-VarNeeded
     ; break-bp-VarUsed
 
-  dce-while =
+  dce-stat =
     ?While(_, _)
-    ; (\VarNeeded,VarUsed/* While(declare-var-needed, dce-stats))
+    ; (\VarNeeded, VarUsed/* While(declare-var-needed, dce-stats))
 
-  dce-for =
+  dce-stat =
     ?For(i, _, _, _)
-    ; (\VarNeeded,VarUsed/* For(declare-var-needed, declare-var-needed, declare-var-needed, dce-stats))
+    ; (\VarNeeded, VarUsed/* For(declare-var-needed, declare-var-needed, declare-var-needed, dce-stats))
     ; rules( VarNeeded.i :- Var(i) )

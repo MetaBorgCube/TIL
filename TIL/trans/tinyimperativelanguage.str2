@@ -9,6 +9,18 @@ imports
   pp
   outline
   analysis
+  analysis/typecheck
+  analysis/typestate
+  analysis/rename-vars
+  interpreter/run
+  optimisation/copyprop
+  optimisation/copyprop-rev
+  optimisation/cse
+  optimisation/dce
+  optimisation/forward-subst
+  optimisation/propconst
+  optimisation/varunion
+  rewrite/simplify
 
 rules // Debugging
   

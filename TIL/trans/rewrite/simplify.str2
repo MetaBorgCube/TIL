@@ -1,0 +1,16 @@
+module rewrite/simplify
+
+imports
+  strategolib
+  signatures/-
+  rewrite/eval
+  rewrite/desugar
+
+strategies
+  til-simplify :: ? -> ?
+  til-simplify =
+    innermost(
+      simplify-Stat
+      <+ simplify-Exp
+      <+ EvalExp
+    )

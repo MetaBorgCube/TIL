@@ -1,84 +1,91 @@
-module til-eval
+module rewrite/eval
 
 imports
+  strategolib
   signatures/-
 
 rules
-  EvalAdd :
+  EvalExp :: ? -> ?
+  EvalExp :
     Add(Int(i), Int(j)) -> Int(<addS>(i,j))
 
-  EvalAdd :
+  EvalExp :
     Add(String(i), String(j)) -> String(<conc-strings>(i,j))
 
-  EvalSub :
+  EvalExp :
     Sub(Int(i), Int(j)) -> Int(<subtS>(i,j))
 
-  EvalMul :
+  EvalExp :
     Mul(Int(i), Int(j)) -> Int(<mulS>(i,j))
 
-  EvalDiv :
+  EvalExp :
     Div(Int(i), Int(j)) -> Int(<divS>(i,j))
 
-  EvalMod :
+  EvalExp :
     Mod(Int(i), Int(j)) -> Int(<modS>(i,j))
 
-  EvalLt :
+  EvalExp :
     Lt(Int(i), Int(j)) -> <compare(ltS)>(i,j)
 
-  EvalGt :
+  EvalExp :
     Gt(Int(i), Int(j)) -> <compare(gtS)>(i,j)
 
-  EvalLeq :
+  EvalExp :
     Leq(Int(i), Int(j)) -> <compare(leqS)>(i,j)
 
-  EvalGeq :
+  EvalExp :
     Geq(Int(i), Int(j)) -> <compare(geqS)>(i,j)
 
-  EvalEqu :
+  EvalExp :
     Equ(Int(i), Int(j)) -> <compare(eq)>(i,j)
 
-  EvalNeq :
+  EvalExp :
     Neq(Int(i), Int(j)) -> <compare(not(eq))>(i,j)
 
+  compare(? -> ?) :: ? -> ?
   compare(s) =
     if s then !True() else !False() end
 
-  EvalOr :
+  EvalExp :
     Or(True(), e) -> True()
 
-  EvalOr :
+  EvalExp :
     Or(False(), e) -> e
 
-  EvalAnd :
+  EvalExp :
     And(True(), e) -> e
 
-  EvalAnd :
+  EvalExp :
     And(False(), e) -> False()
 
-  AddZero :
+  simplify-Exp :: ? -> ?
+  simplify-Exp :
     Add(e, Int("0")) -> e
 
-  AddZero :
+  simplify-Exp :
     Add(Int("0"), e) -> e
 
-  MulOne :
+  simplify-Exp :
     Mul(e, Int("1")) -> e
 
-  MulOne :
+  simplify-Exp :
     Mul(Int("1"), e) -> e
 
-  EvalS2I :
-    FunCall("string2int", [String(x)]) -> Int(x)
-    where <string-to-int> x
+  EvalExp :
+    FunCall("string2int", [String(x)]) -> Int(x')
+    where x' := <un-double-quote> x
+        ; <string-to-int> x'
 
-  EvalI2S :
-    FunCall("int2string", [Int(i)]) -> String(i)
+  EvalExp :
+    FunCall("int2string", [Int(i)]) -> String(<double-quote> i)
 
+  EvalIf :: ? -> ?
   EvalIf :
     IfElse(False(), st1*, st2*) -> Block(st2*)
 
   EvalIf :
     IfElse(True(), st1*, st2*) -> Block(st1*)
 
+  EvalWhile :: ? -> ?
   EvalWhile :
      While(False(), st*) -> Block([])

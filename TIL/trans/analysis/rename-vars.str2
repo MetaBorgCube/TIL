@@ -1,8 +1,8 @@
-module analysis/til-rename-vars
+module analysis/rename-vars
 
 imports
+  strategolib
   signatures/-
-  libstratego-lib
 
 signature
   constructors

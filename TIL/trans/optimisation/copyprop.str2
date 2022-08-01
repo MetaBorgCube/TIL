@@ -1,26 +1,24 @@
-module optimisation/til-copyprop
+module optimisation/copyprop
 
 imports
-  optimisation/til-opt-lib
+  strategolib
+  signatures/-
+  optimisation/opt-lib
 
 strategies
-  copyprop = 
-    CopyProp
-    <+ copyprop-declaration
-    <+ copyprop-assign 
-    <+ copyprop-block
-    <+ copyprop-if
-    <+ copyprop-while
-    <+ all(copyprop)
+  copyprop :: ? -> ?
+  copyprop =
+    alltd(CopyProp <+ copyprop-rule)
 
-  copyprop-block =
+  copyprop-rule :: ? -> ?
+  copyprop-rule =
     Block({| CopyProp : map(copyprop) |})
 
-  copyprop-declaration = 
+  copyprop-rule = 
     (?Declaration(x) <+ ?DeclarationTyped(x, t))
     ; new-CopyProp(|x, x)
 
-  copyprop-assign = 
+  copyprop-rule = 
     Assign(?x, copyprop => e)
     ; undefine-CopyProp(|x)
     ; where( innermost-scope-CopyProp => z )
@@ -28,14 +26,15 @@ strategies
         rules( CopyProp.z : Var(x) -> Var(y) depends on [(x,x),(y,y)] )
       end
 
-  copyprop-if =
+  copyprop-rule =
     IfElse(copyprop, id, id)
     ; (IfElse(id, copyprop, id) /CopyProp\ IfElse(id,id,copyprop))
 
-  copyprop-while =
+  copyprop-rule =
     ?While(_, _)
     ; (/CopyProp\* While(copyprop, copyprop))
 
+  innermost-scope-CopyProp :: ? -> ?
   innermost-scope-CopyProp = 
     get-var-names => vars
     ; innermost-scope-CopyProp(elem-of(|vars))

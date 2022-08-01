@@ -1,11 +1,13 @@
-module analysis/til-typestate
+module analysis/typestate
 
 imports
+  strategolib
   signatures/-
-  optimisation/til-opt-lib
-  rewrite/til-desugar
+  optimisation/opt-lib
+  rewrite/desugar
 
 signature
+  sorts Property TypeState
   constructors
     TypeState : Property -> TypeState
     UnInit    : Property
@@ -20,48 +22,36 @@ strategies
     Program(typestate-stats)
 
   typestate =
-    typestate-declaration
-    <+ typestate-assign
-    <+ typestate-block
-    <+ typestate-if
-    <+ typestate-while
-    <+ typestate-for
+    typestate-stat
     <+ all(typestate); try(typestate-exp)
 
-  typestate-block =
+  typestate-stat =
     Block(typestate-stats)
 
   typestate-stats =
     {| TypestateOf : map(typestate) |}
 
-  typestate-declaration =
+  typestate-stat =
     (?Declaration(x) <+ ?DeclarationTyped(x, t))
     ; rules( TypestateOf+x : x -> UnInit() )
 
-  typestate-assign =
+  typestate-stat =
     Assign(?x, typestate => e)
     ; where( <typestate-of> e => ts )
     ; rules( TypestateOf.x : x -> Init() )
 
-  typestate-if =
+  typestate-stat =
     IfElse(typestate, id, id)
     ; merge-TypestateOf(IfElse(id, typestate-stats, id), IfElse(id,id,typestate-stats))
 
-  typestate-while =
+  typestate-stat =
     ?While(_, _)
     ; merge-TypestateOf(id, While(typestate, typestate-stats))
 
-  typestate-for =
+  typestate-stat =
     For(?x, typestate, typestate, id)
     ; rules( TypestateOf.x : x -> Init() )
     ; merge-TypestateOf(id, For(id,id,id,typestate-stats))
-
-  typestate-exp =
-    TypestateVar
-    <+ TypestateInt
-    <+ TypestateString
-    <+ BinOpToFunCall; TypestateFunCall; FunCallToBinOp
-    <+ TypestateFunCall
 
 rules
   typestate-of :
@@ -69,17 +59,19 @@ rules
     where <fetch-elem(?TypeState(<id>))> t* => ts
 
 rules
-  TypestateVar :
+  typestate-exp :
     Var(x){t*} -> Var(x){TypeState(ts), t*}
     where <TypestateOf> x => ts
 
-  TypestateInt :
+  typestate-exp :
     Int(i){t*} -> Int(i){TypeState(Init()), t*}
 
-  TypestateString :
+  typestate-exp :
     String(x){t*} -> String(x){TypeState(Init()), t*}
 
-  TypestateFunCall :
+  typestate-exp = BinOpToFunCall; typestate-exp; FunCallToBinOp
+
+  typestate-exp :
     FunCall(f, e*){t*} -> FunCall(f, e*){TypeState(ts),t*}
     where <foldr(!Init(), typestate-combine, typestate-of)> e* => ts
 

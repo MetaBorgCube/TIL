@@ -1,0 +1,12 @@
+module interpreter/eval-exp
+
+imports
+  strategolib
+  signatures/-
+  rewrite/eval
+
+strategies
+  eval-exp(eval-var) = 
+    bottomup(try(
+      eval-var <+ EvalExp
+    ))

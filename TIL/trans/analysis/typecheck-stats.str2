@@ -1,9 +1,10 @@
-module analysis/til-typecheck-stats
+module analysis/typecheck-stats
 
 imports
+  strategolib
   signatures/-
-  analysis/til-typecheck-var
-  analysis/til-typecheck-exp
+  analysis/typecheck-var
+  analysis/typecheck-exp
 
 strategies
   typecheck-block =

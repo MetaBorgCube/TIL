@@ -1,38 +1,34 @@
-module interpreter/til-eval-stats
+module interpreter/eval-stats
 
 imports
-  interpreter/til-eval-var
-  rewrite/til-eval
+  strategolib
+  interpreter/eval-var
+  rewrite/eval
   signatures/-
 
 signature
   constructors
-    Goto : String -> Stat
+    Goto : string -> Stat
 
 strategies
 
-  eval-block = 
+  eval-stat-rule = 
     ?Block(<eval-stats>)
 
   eval-stats = 
     {| EvalVar : map(eval-stat) |}
 
   eval-stat = //debug(!"eval-stat: "); (
-    eval-assign
-    <+ eval-write
-    <+ eval-declaration
-    <+ eval-block
-    <+ eval-if
-    <+ eval-while
+    eval-stat-rule
     <+ EvalGoto
   //)
 
-  eval-if = 
+  eval-stat-rule = 
     IfElse(eval-exp, id, id)
     ; EvalIf
     ; eval-stat
 
-  eval-while = 
+  eval-stat-rule = 
     ?While(e, st*)
     ; where(new => label)
     ; where(<conc>(st*, [Goto(label)]) => st2*)

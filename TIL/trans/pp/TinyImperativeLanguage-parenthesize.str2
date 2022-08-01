@@ -13,12 +13,15 @@ imports
 
 
 strategies
+//  io-TinyImperativeLanguage-parenthesize :: ? -> ?
   io-TinyImperativeLanguage-parenthesize =
     fail
 
+//  parenthesize-TinyImperativeLanguage :: ? -> ?
   parenthesize-TinyImperativeLanguage =
     fail
 
+//  get-term-sort(|?) :: ? -> ?
   get-term-sort(|t) =
     prim("SSL_EXT_get_sort_imploder_attachment", <id>) <+ !"unknown"
 

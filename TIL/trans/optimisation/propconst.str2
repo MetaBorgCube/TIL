@@ -1,37 +1,25 @@
-module optimisation/til-propconst
+module optimisation/propconst
 
 imports
-  optimisation/til-opt-lib
+  strategolib
+  signatures/-
+  optimisation/opt-lib
+  rewrite/eval
 
 strategies
   propconst =
     PropConst
-    <+ propconst-declaration
-    <+ propconst-assign
-    <+ propconst-block
-    <+ propconst-if-then
-    <+ propconst-if-then-else
-    <+ propconst-while
-    <+ propconst-labeled-while
-    <+ propconst-for
-    <+ propconst-labeled-stm
-    <+ propconst-break
-    <+ propconst-break-label
-    <+ propconst-continue
-    <+ propconst-continue-label
-    <+ propconst-throw
-    <+ propconst-try-catch
-    <+ propconst-try-catch-finally
+    <+ propconst-rule
     <+ all(propconst); try(EvalExp)
 
-  propconst-block =
+  propconst-rule =
     Block({| PropConst : map(propconst) |})
 
-  propconst-declaration =
+  propconst-rule =
     (?Declaration(x) <+ ?DeclarationTyped(x, t))
     ; rules( PropConst+x :- Var(x) )
 
-  propconst-assign =
+  propconst-rule =
     Assign(?x, propconst => e)
     ; if <is-value> e then
         rules( PropConst.x : Var(x) -> e )
@@ -39,53 +27,53 @@ strategies
         rules( PropConst.x :- Var(x) )
       end
 
-  propconst-if-then =
+  propconst-rule =
     IfThen(propconst, id)
     ; (EvalIf; propconst
        <+ IfThen(id, {| PropConst: map(propconst) |}) /PropConst\ id)
 
-  propconst-if-then-else =
+  propconst-rule =
     IfElse(propconst, id, id)
     ; (EvalIf; propconst
        <+ IfElse(id, {| PropConst: map(propconst) |}, id) /PropConst\
           IfElse(id, id, {| PropConst: map(propconst) |}))
 
-  propconst-while =
+  propconst-rule =
     ?While(_, _)
     ; (/PropConst\* While(propconst, {| PropConst: map(propconst) |}))
 
-  propconst-labeled-while =
+  propconst-rule =
     Labeled(?label,
       dr-fix-and-intersect(While(propconst, {| PropConst: map(propconst) |}) | ["PropConst"], label)
     )
 
-  propconst-for =
+  propconst-rule =
     For(?x, propconst, propconst, id)
     ; rules( PropConst.x :- Var(x) )
     ; (/PropConst\* For(id, id, id, {| PropConst: map(propconst) |}))
 
-  propconst-labeled-stm =
+  propconst-rule =
     Labeled(?label,
       dr-label-intersect(propconst | ["PropConst"], label)
     )
 
-  propconst-break =
+  propconst-rule =
     ?Break(None())
     ; break-PropConst
 
-  propconst-break-label =
+  propconst-rule =
     ?Break(Some(label))
     ; break-to-label-PropConst(|label)
 
-  propconst-continue =
+  propconst-rule =
     ?Continue(None())
     ; continue-PropConst
 
-  propconst-continue-label =
+  propconst-rule =
     ?Continue(Some(label))
     ; continue-to-label-PropConst(|label)
 
-  propconst-try-catch =
+  propconst-rule =
     ?Try(tblock, cclauses)
     ; dr-init-exception-block(fail | <get-catch-tags>cclauses, ["PropConst"])
     ; <propconst>tblock => tblock'
@@ -93,7 +81,7 @@ strategies
     ; dr-complete-exception-block-intersect(|["PropConst"])
     ; !Try(tblock', cclauses')
 
-  propconst-try-catch-finally =
+  propconst-rule =
     ?Try(tblock, cclauses, fblock)
     ; dr-init-exception-block(id | <get-catch-tags>cclauses, ["PropConst"])
     ; <propconst>tblock => tblock'
@@ -101,10 +89,9 @@ strategies
     ; <dr-complete-finally-intersect(propconst | ["PropConst"])>fblock => fblock'
     ; dr-complete-exception-block-intersect(|["PropConst"])
     ; !Try(tblock', cclauses', fblock')
-
   get-catch-tags =
     map(?Catch(_, <id>, _))
 
-  propconst-throw =
+  propconst-rule =
     ?Throw(TypeName(t))
     ; throw-PropConst(eq | t)

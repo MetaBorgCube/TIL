@@ -1,14 +1,16 @@
-module interpreter/til-eval-var
+module interpreter/eval-var
 
 imports
-  interpreter/til-eval-exp
+  strategolib
+  signatures/-
+  interpreter/eval-exp
 
 strategies
-  eval-declaration = 
+  eval-stat-rule = 
     (?Declaration(x) <+ ?DeclarationTyped(x, t))
     ; rules( EvalVar+x :- Var(x) )
 
-  eval-assign = 
+  eval-stat-rule = 
     Assign(?x, eval-exp => val)
     ; rules(EvalVar.x : Var(x) -> val)
 
@@ -16,7 +18,7 @@ strategies
     FunCall("read", []) -> String(x)
     where stdin-stream; read-text-line => x
 
-  eval-write = 
+  eval-stat-rule = 
     ?ProcCall("write", [<eval-exp>])
     ; ?String(<try(un-double-quote); try(unescape)>)
     ; <fprint>(<stdout-stream>, [<id>])

@@ -1,9 +1,9 @@
-module analysis/til-typecheck
+module analysis/typecheck
 
 imports
-  libstratego-lib
-  analysis/til-typecheck-stats
+  strategolib
   signatures/-
+  analysis/typecheck-stats
 
 strategies
 

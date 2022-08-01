@@ -1,28 +1,14 @@
-module analysis/til-typecheck-exp
+module analysis/typecheck-exp
 
 imports
+  strategolib
   signatures/-
 
 strategies
   typecheck-exp(typecheck-var) =
     bottomup(try(
          typecheck-var
-      <+ TypecheckAdd
-      <+ TypecheckMul
-      <+ TypecheckSub
-      <+ TypecheckDiv
-      <+ TypecheckMod
-      <+ TypecheckLeq
-      <+ TypecheckGeq
-      <+ TypecheckLt
-      <+ TypecheckGt
-      <+ TypecheckEqu
-      <+ TypecheckNeq
-      <+ TypecheckOr
-      <+ TypecheckAnd
-      <+ TypecheckInt
-      <+ TypecheckString
-      <+ TypecheckBool
+      <+ typecheck-rule
     ))
 
 rules
@@ -33,84 +19,84 @@ rules
   is-type =
     ?TypeName(_)
 
-  TypecheckInt :
+  typecheck-rule :
     Int(i) -> Int(i){TypeName("int")}
 
-  TypecheckString :
+  typecheck-rule :
     String(x) -> String(x){TypeName("string")}
 
-  TypecheckBool :
+  typecheck-rule :
     True() -> True(){TypeName("bool")}
 
-  TypecheckBool :
+  typecheck-rule :
     False() -> False(){TypeName("bool")}
 
-  TypecheckAdd :
+  typecheck-rule :
     Add(e1, e2) -> Add(e1, e2){TypeName("string")}
     where <typeof> e1 => TypeName("string")
         ; <typeof> e2 => TypeName("string")
 
-  TypecheckAdd :
+  typecheck-rule :
     Add(e1, e2) -> Add(e1, e2){TypeName("int")}
     where <typeof> e1 => TypeName("int")
         ; <typeof> e2 => TypeName("int")
 
-  TypecheckMul :
+  typecheck-rule :
     Mul(e1, e2) -> Mul(e1, e2){TypeName("int")}
     where <typeof> e1 => TypeName("int")
         ; <typeof> e2 => TypeName("int")
 
-  TypecheckSub :
+  typecheck-rule :
     Sub(e1, e2) -> Sub(e1, e2){TypeName("int")}
     where <typeof> e1 => TypeName("int")
         ; <typeof> e2 => TypeName("int")
 
-  TypecheckDiv :
+  typecheck-rule :
     Div(e1, e2) -> Div(e1, e2){TypeName("int")}
     where <typeof> e1 => TypeName("int")
         ; <typeof> e2 => TypeName("int")
 
-  TypecheckMod :
+  typecheck-rule :
     Mod(e1, e2) -> Mod(e1, e2){TypeName("int")}
     where <typeof> e1 => TypeName("int")
         ; <typeof> e2 => TypeName("int")
 
-  TypecheckLt :
+  typecheck-rule :
     Lt(e1, e2) -> Lt(e1, e2){TypeName("bool")}
     where <typeof> e1 => TypeName("int")
         ; <typeof> e2 => TypeName("int")
 
-  TypecheckGt :
+  typecheck-rule :
     Gt(e1, e2) -> Gt(e1, e2){TypeName("bool")}
     where <typeof> e1 => TypeName("int")
         ; <typeof> e2 => TypeName("int")
 
-  TypecheckLeq :
+  typecheck-rule :
     Leq(e1, e2) -> Leq(e1, e2){TypeName("bool")}
     where <typeof> e1 => TypeName("int")
         ; <typeof> e2 => TypeName("int")
 
-  TypecheckGeq :
+  typecheck-rule :
     Geq(e1, e2) -> Geq(e1, e2){TypeName("bool")}
     where <typeof> e1 => TypeName("int")
         ; <typeof> e2 => TypeName("int")
 
-  TypecheckEqu :
+  typecheck-rule :
     Equ(e1, e2) -> Equ(e1, e2){TypeName("bool")}
     where <typeof> e1 => TypeName("int")
         ; <typeof> e2 => TypeName("int")
 
-  TypecheckNeq :
+  typecheck-rule :
     Neq(e1, e2) -> Neq(e1, e2){TypeName("bool")}
     where <typeof> e1 => TypeName("int")
         ; <typeof> e2 => TypeName("int")
 
-  TypecheckAnd :
+  typecheck-rule :
     And(e1, e2) -> And(e1, e2){TypeName("bool")}
     where <typeof> e1 => TypeName("bool")
         ; <typeof> e2 => TypeName("bool")
 
-  TypecheckOr :
+  typecheck-rule :
     Or(e1, e2) -> Or(e1, e2){TypeName("bool")}
     where <typeof> e1 => TypeName("bool")
         ; <typeof> e2 => TypeName("bool")
