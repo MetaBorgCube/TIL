@@ -28,39 +28,33 @@ strategies // expressions with variables and calls
   typecheck-exp =
     typecheck-exp(TypecheckVar <+ typecheck-funcall)
 
-  typecheck-funcall =
-    TypecheckRead <+ TypecheckS2I <+ TypecheckI2S <+ TypecheckB2S
-
-  typecheck-proccall =
-    TypecheckWrite
-
 strategies // built-in functions
 
-  TypecheckS2I :
+  typecheck-funcall :
+    FunCall("read", []) -> FunCall("read", []){TypeName("string")}
+
+  typecheck-funcall :
+    FunCall("readint", []) -> FunCall("readint", []){TypeName("int")}
+
+  typecheck-funcall :
     FunCall("string2int", [e]) -> FunCall("string2int", [e]){TypeName("int")}
     where <typeof> e => TypeName("string")
 
-  TypecheckI2S :
+  typecheck-funcall :
     FunCall("int2string", [e]) -> FunCall("int2string", [e]){TypeName("string")}
     where <typeof> e => TypeName("int")
 
-  TypecheckB2S :
+  typecheck-funcall :
     FunCall("bool2string", [e]) -> FunCall("bool2string", [e]){TypeName("string")}
     where <typeof> e => TypeName("bool")
 
-  TypecheckRead :
-    FunCall("read", []) -> FunCall("read", []){TypeName("string")}
-
-  TypecheckRead :
-    FunCall("readint", []) -> FunCall("readint", []){TypeName("int")}
-
 strategies // built-in procedures
 
-  TypecheckWrite :
+  typecheck-proccall :
     ProcCall("write", [e]) -> ProcCall("write", [e]){TypeName("void")}
     where <typeof> e => TypeName("string")
 
-  TypecheckWrite :
+  typecheck-proccall :
     ProcCall("writeint", [e]) -> ProcCall("writeint", [e]){TypeName("void")}
     where <typeof> e => TypeName("int")
 

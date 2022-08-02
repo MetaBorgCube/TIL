@@ -20,7 +20,7 @@ strategies
 
   eval-stat(eval-read) = //debug(!"eval-stat: "); (
     eval-stat-rule(eval-read)
-    <+ EvalGoto
+    <+ EvalGoto(eval-read)
   //)
 
   eval-stat-rule(eval-read) = 
@@ -32,5 +32,5 @@ strategies
     ?While(e, st*)
     ; where(new => label)
     ; where(<conc>(st*, [Goto(label)]) => st2*)
-    ; rules( EvalGoto : Goto(label) -> <eval-stat(eval-read)>IfElse(e, st2*, []) )
+    ; rules( EvalGoto(eval-read) : Goto(label) -> <eval-stat(eval-read)>IfElse(e, st2*, []) )
     ; <eval-stat(eval-read)> Goto(label)
