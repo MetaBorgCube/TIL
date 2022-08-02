@@ -21,11 +21,22 @@ imports
   optimisation/propconst
   optimisation/varunion
   rewrite/simplify
+  rewrite/eblock-desugar
 
 rules // Debugging
-  
+
   debug-show-aterm:
     (node, _, _, path, project-path) -> (filename, result)
     with
       filename := <guarantee-extension(|"aterm")> path
     ; result   := node
+
+  til-optimise =
+    til-simplify
+  ; til-rename-vars
+  ; til-eblock-desugar
+  ; copyprop-rev
+  ; forward-subst
+  ; copyprop
+  ; propconst
+  ; dce-program

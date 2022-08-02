@@ -5,6 +5,7 @@ imports
   signatures/-
   rewrite/eval
   rewrite/desugar
+  rewrite/eblock-desugar
 
 strategies
   til-simplify :: ? -> ?

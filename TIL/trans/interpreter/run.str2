@@ -5,5 +5,16 @@ imports
   interpreter/eval-stats
 
 strategies
-  eval-program = 
-    ?Program(<eval-stats>)
+  til-run: (program, inputs) -> result
+    where {| ReadInput:
+      rules(ReadInput: _ -> inputs)
+    ; result := <eval-program(EvalReadDR)> program
+    |}
+
+  EvalReadDR: _ -> line
+    where
+      [line | inputs] := <ReadInput>
+    ; rules(ReadInput: _ -> inputs)
+
+  eval-program(eval-read) = 
+    ?Program(<eval-stats(eval-read)>)

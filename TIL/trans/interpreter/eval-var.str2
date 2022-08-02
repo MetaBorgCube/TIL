@@ -6,20 +6,20 @@ imports
   interpreter/eval-exp
 
 strategies
-  eval-stat-rule = 
+  eval-stat-rule(eval-read) = 
     (?Declaration(x) <+ ?DeclarationTyped(x, t))
     ; rules( EvalVar+x :- Var(x) )
 
-  eval-stat-rule = 
-    Assign(?x, eval-exp => val)
+  eval-stat-rule(eval-read) = 
+    Assign(?x, eval-exp(eval-read) => val)
     ; rules(EvalVar.x : Var(x) -> val)
 
   EvalRead :
     FunCall("read", []) -> String(x)
     where stdin-stream; read-text-line => x
 
-  eval-stat-rule = 
-    ?ProcCall("write", [<eval-exp>])
+  eval-stat-rule(eval-read) = 
+    ?ProcCall("write", [<eval-exp(eval-read)>])
     ; ?String(<try(un-double-quote); try(unescape)>)
     ; <fprint>(<stdout-stream>, [<id>])
 
@@ -27,5 +27,5 @@ strategies
     ?Var(<id>)
     ; fatal-err(|<concat-strings>["variable ", <id>, " used before being defined"])
 
-  eval-exp = 
-    eval-exp(EvalVar <+ VarUndefined <+ EvalRead)
+  eval-exp(eval-read) = 
+    eval-exp(EvalVar <+ VarUndefined, eval-read)

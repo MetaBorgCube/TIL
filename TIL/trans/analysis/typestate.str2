@@ -15,9 +15,6 @@ signature
     Dunno     : Property
 
 strategies
-  io-til-typestate =
-    io-wrap(typestate-program)
-
   typestate-program =
     Program(typestate-stats)
 

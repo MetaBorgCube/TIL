@@ -6,7 +6,7 @@ imports
   rewrite/eval
 
 strategies
-  eval-exp(eval-var) = 
+  eval-exp(eval-var, eval-read) = 
     bottomup(try(
       eval-var <+ EvalExp
     ))
