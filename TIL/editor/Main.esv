@@ -25,3 +25,5 @@ menus
     action: "Run with input [1,1]" = debug-run-1-1
 
     action: "Run with input [a,1]" = debug-run-a-1
+
+    action: "Optimise program" = debug-optimise

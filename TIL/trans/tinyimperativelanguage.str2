@@ -64,3 +64,9 @@ rules // Debugging
   debug-run-1-1 = debug-run(|["\"1\"", "\"1\""])
 
   debug-run-a-1 = debug-run(|["\"a\"", "\"1\""])
+
+  debug-optimise:
+    (node, _, _, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"aterm")> path
+    ; result   := <til-optimise> node
