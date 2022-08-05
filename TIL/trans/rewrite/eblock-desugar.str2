@@ -20,7 +20,7 @@ rules
   FunCallToEBlock :
     FunCall(f, e*) ->
     EBlock([Declaration(x), Assign(x, FunCall(f, e*))], Var(x), [])
-    where new => x
+    where <local-newname> "fcteb" => x
 
   EBlockEBlock :
     EBlock(st1*, EBlock(st2*, e, st3*), st4*) ->
@@ -32,7 +32,7 @@ rules
   MovePostStatementsInFront :
     EBlock(st1*, e, st2*@[_|_]) ->
     EBlock([Declaration(x), st1*, Assign(x, e), st2*], Var(x), [])
-    where new => x
+    where <local-newname> "mpsif" => x
 
   HoistEBlock :
     FunCall(f, e1*) -> EBlock(st1*, FunCall(f, e2*), [])
@@ -72,7 +72,7 @@ rules
 
   collect-eblocks =
     fetch(?EBlock(_,_,_))
-    ; map({where(new => x); !([Declaration(x), Assign(x, <id>)], Var(x))})
+    ; map({where(<local-newname> "ce" => x); !([Declaration(x), Assign(x, <id>)], Var(x))})
     ; unzip
     ; (concat, id)
 

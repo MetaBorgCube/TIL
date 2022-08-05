@@ -3,15 +3,16 @@ module interpreter/run
 imports
   strategolib
   interpreter/eval-stats
+  signatures/-
 
 strategies
-  til-run: (program, inputs) -> result
+  run: (program, inputs) -> result
     where {| ReadInput:
       rules(ReadInput: _ -> inputs)
     ; result := <eval-program(EvalReadDR)> program
     |}
 
-  EvalReadDR: _ -> line
+  EvalReadDR: FunCall("read", []) -> String(line)
     where
       [line | inputs] := <ReadInput>
     ; rules(ReadInput: _ -> inputs)

@@ -20,12 +20,14 @@ strategies
 
   eval-stat-rule(eval-read) = 
     ?ProcCall("write", [<eval-exp(eval-read)>])
-    ; ?String(<try(un-double-quote); try(unescape)>)
-    ; <fprint>(<stdout-stream>, [<id>])
+    ; where( ?String(<try(un-double-quote); try(unescape)>)
+           ; <fprint>(<stdout-stream>, [<id>]))
+
+  eval-stat-rule(eval-read) = 
+    ?ProcCall("write", [<eval-exp(eval-read)>])
+    ; where( ?Int(<id>)
+           ; <fprint>(<stdout-stream>, [<id>]))
 
   VarUndefined =
     ?Var(<id>)
     ; fatal-err(|<concat-strings>["variable ", <id>, " used before being defined"])
-
-  eval-exp(eval-read) = 
-    eval-exp(EvalVar <+ VarUndefined, eval-read)

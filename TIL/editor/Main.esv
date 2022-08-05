@@ -12,3 +12,16 @@ language
 // Add this provider when switching Stratego to interpreted mode:
 //  provider : target/metaborg/stratego.ctree
   provider : target/metaborg/stratego.jar
+
+
+menus
+  
+  menu: "Run" (openeditor)
+
+    action: "Run with input [1]" = debug-run-1
+
+    action: "Run with input [5]" = debug-run-5
+
+    action: "Run with input [1,1]" = debug-run-1-1
+
+    action: "Run with input [a,1]" = debug-run-a-1

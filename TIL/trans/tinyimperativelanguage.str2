@@ -31,12 +31,36 @@ rules // Debugging
       filename := <guarantee-extension(|"aterm")> path
     ; result   := node
 
-  til-optimise =
+  til-optimise = scope-local-new(
     til-simplify
-  ; til-rename-vars
+  ; scoped-rename-vars
   ; til-eblock-desugar
   ; copyprop-rev
   ; forward-subst
   ; copyprop
   ; propconst
   ; dce-program
+  )
+
+  til-run = scope-local-new(
+    til-simplify
+  ; scoped-rename-vars
+  ; til-eblock-desugar
+  ; run
+  )
+
+  debug-run(|input):
+    (node, _, _, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"aterm")> path
+    ; result   := <til-run> (node, input)
+
+  debug-run-1 = debug-run(|["\"1\""])
+
+  debug-run-5 = debug-run(|["\"5\""])
+
+  debug-run-5 = debug-run(|["\"5\""])
+
+  debug-run-1-1 = debug-run(|["\"1\"", "\"1\""])
+
+  debug-run-a-1 = debug-run(|["\"a\"", "\"1\""])

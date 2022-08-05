@@ -10,7 +10,13 @@ rules
     Add(Int(i), Int(j)) -> Int(<addS>(i,j))
 
   EvalExp :
-    Add(String(i), String(j)) -> String(<conc-strings>(i,j))
+    Add(String(i), String(j)) -> String(<conc-strings;double-quote>(<un-double-quote> i,<un-double-quote> j))
+
+  EvalExp :
+    Add(Int(i), String(j)) -> String(<conc-strings;double-quote>(i,<un-double-quote> j))
+
+  EvalExp :
+    Add(String(i), Int(j)) -> String(<conc-strings;double-quote>(<un-double-quote> i,j))
 
   EvalExp :
     Sub(Int(i), Int(j)) -> Int(<subtS>(i,j))

@@ -3,6 +3,7 @@ module interpreter/eval-stats
 imports
   strategolib
   interpreter/eval-var
+  interpreter/eval-exp
   rewrite/eval
   signatures/-
 
@@ -16,12 +17,15 @@ strategies
     ?Block(<eval-stats(eval-read)>)
 
   eval-stats(eval-read) = 
-    {| EvalVar : map(eval-stat(eval-read)) |}
+    {| EvalVar : map(
+//    debug(!"eval-stats1 ");
+    eval-stat(eval-read)
+//    ;debug(!"eval-stats2 ")
+    ) |}
 
-  eval-stat(eval-read) = //debug(!"eval-stat: "); (
+  eval-stat(eval-read) =
     eval-stat-rule(eval-read)
     <+ EvalGoto(eval-read)
-  //)
 
   eval-stat-rule(eval-read) = 
     IfElse(eval-exp(eval-read), id, id)
@@ -30,7 +34,7 @@ strategies
 
   eval-stat-rule(eval-read) = 
     ?While(e, st*)
-    ; where(new => label)
+    ; where(<local-newname> "while" => label)
     ; where(<conc>(st*, [Goto(label)]) => st2*)
     ; rules( EvalGoto(eval-read) : Goto(label) -> <eval-stat(eval-read)>IfElse(e, st2*, []) )
     ; <eval-stat(eval-read)> Goto(label)

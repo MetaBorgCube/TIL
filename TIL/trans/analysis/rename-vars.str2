@@ -9,24 +9,20 @@ signature
     Read : ID -> Exp
 
 strategies
+  scoped-rename-vars = {| RenameVar: rename-vars |}
 
-  til-rename-vars =
-    {| RenameVar
-     : Var(RenameVar)
-    <+ Assign(RenameVar, til-rename-vars)
+  rename-vars =
+    alltd(
+       Var(RenameVar)
+    <+ Assign(RenameVar, rename-vars)
     <+ Read(RenameVar)
-    <+ For(RenameVar, til-rename-vars, til-rename-vars, til-rename-vars)
-    <+ RenameDeclaration
-    <+ Block({| RenameVar : map(til-rename-vars) |})
-    <+ all(til-rename-vars)
-     |}
+    <+ For(RenameVar, rename-vars, rename-vars, rename-vars)
+    <+ Declaration(RenameDeclaration)
+    <+ DeclarationTyped(RenameDeclaration, id)
+    <+ Block({| RenameVar : map(rename-vars) |})
+    )
 
   RenameDeclaration :
-    Declaration(x) -> Declaration(y)
-    where <newname> x => y
-        ; rules( RenameVar : x -> y )
-
-  RenameDeclaration :
-    DeclarationTyped(x, t) -> DeclarationTyped(y, t)
-    where <newname> x => y
+    x -> y
+    where  <local-newname> x => y
         ; rules( RenameVar : x -> y )

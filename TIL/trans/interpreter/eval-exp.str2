@@ -4,9 +4,10 @@ imports
   strategolib
   signatures/-
   rewrite/eval
+  interpreter/eval-var
 
 strategies
-  eval-exp(eval-var, eval-read) = 
+  eval-exp(eval-read) = 
     bottomup(try(
-      eval-var <+ EvalExp
+      EvalVar <+ VarUndefined <+ EvalExp <+ eval-read
     ))

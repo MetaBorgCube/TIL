@@ -16,7 +16,7 @@ rules
           <conc>(st*, [Assign(x, Add(Var(x), Int("1")))])
         )
       ])
-    where new => y
+    where <local-newname> "for" => y
 
   simplify-Stat :
     IfThen(e, st*) -> IfElse(e, st*, [])
